@@ -1,0 +1,98 @@
+Attribute VB_Name = "Module2"
+Sub analysis()
+    
+  Dim x As Worksheet
+  For Each x In ThisWorkbook.Worksheets
+  
+   
+    x.Range("I1").Value = "Ticker"
+    x.Range("J1").Value = "Yearly Change"
+    x.Range("K1").Value = "Percent Change"
+    x.Range("L1").Value = "Total Stock Volume"
+    x.Cells(2, 14).Value = "Greatest % Increase"
+    x.Cells(3, 14).Value = "Greatest % Decrease"
+    x.Cells(4, 14).Value = "Greatest Total Volume"
+    
+    
+    
+    Dim ticker As String
+    Dim lastrow As Long
+    Dim yearly_change As Double
+    Dim percent_change As Double
+    Dim total_volume As LongLong
+    Dim ticker_collate As Integer
+    Dim greatest_total As LongLong
+    lowestvalue = 0
+    greatestvalue = 0
+    greatest_total = 0
+    
+    
+    
+    
+        
+        ticker_collate = 2
+        total_volume = 0
+        
+        lastrow = x.Cells(Rows.Count, 1).End(xlUp).Row
+        
+        
+        For i = 2 To lastrow
+          If x.Cells(i - 1, 1).Value <> x.Cells(i, 1).Value Then
+            opening_price = x.Cells(i, 3).Value
+          End If
+            
+          If x.Cells(i + 1, 1).Value <> x.Cells(i, 1).Value Then
+            ticker = x.Cells(i, 1).Value
+            closing_price = x.Cells(i, 6).Value
+            total_volume = total_volume + x.Cells(i, 7).Value
+            x.Range("I" & ticker_collate).Value = ticker
+            x.Range("L" & ticker_collate).Value = total_volume
+            yearly_change = closing_price - opening_price
+            x.Range("J" & ticker_collate).Value = yearly_change
+            percent_change = ((closing_price - opening_price) / opening_price)
+            x.Range("K" & ticker_collate).Value = percent_change
+            x.Cells(ticker_collate, 11).NumberFormat = "0.00%"
+            ticker_collate = ticker_collate + 1
+            total_volume = 0
+          Else
+            total_volume = total_volume + x.Cells(i, 7).Value
+            
+          End If
+          
+            If x.Cells(i, 11).Value > greatestvalue Then
+                greatestvalue = x.Cells(i, 11).Value
+                End If
+                
+          
+            If x.Cells(i, 11).Value < lowestvalue Then
+                lowestvalue = x.Cells(i, 11).Value
+                End If
+                
+            If x.Cells(i, 12).Value > greatest_total Then
+                greatest_total = x.Cells(i, 12).Value
+                End If
+            
+            If x.Cells(i, 10).Value > 0 Then
+                x.Cells(i, 10).Interior.ColorIndex = 4
+                End If
+            If x.Cells(i, 10).Value < 0 Then
+                x.Cells(i, 10).Interior.ColorIndex = 3
+                End If
+                
+            
+        
+        Next i
+            
+            x.Cells(3, 15).Value = lowestvalue
+            x.Cells(2, 15).Value = greatestvalue
+            x.Cells(4, 15).Value = greatest_total
+            Cells(2, 15).NumberFormat = "0.00%"
+            Cells(3, 15).NumberFormat = "0.00%"
+        
+        
+    Next x
+    
+End Sub
+
+
+
